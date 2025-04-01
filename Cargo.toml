@@ -27,4 +27,5 @@ unseparated_literal_suffix = "allow"
 question_mark_used = "allow"
 self_named_module_files = "allow"
 missing_trait_methods = "allow"
+arbitrary_source_item_ordering = "allow"
 
