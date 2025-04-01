@@ -4,9 +4,7 @@ use core::num::NonZero;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins.set(
-            window_plugin()
-        ))
+        .add_plugins(DefaultPlugins.set(window_plugin()))
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
         .run();
 }
