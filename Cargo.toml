@@ -1,0 +1,30 @@
+[package]
+name = "quantum-intruder"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bevy = { version = "0.15.2", features = ["dynamic_linking"] }
+bevy_rapier3d = "0.29.0"
+
+[profile.dev]
+opt-level = 1
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
+nursery = { level = "deny", priority = -1 }
+restriction = { level = "deny", priority = -1 }
+blanket_clippy_restriction_lints = "allow"
+
+missing_docs_in_private_items = "allow"
+missing_errors_doc = "warn"
+cognitive_complexity = "warn"
+too_many_lines = "warn"
+implicit_return = "allow"
+single_call_fn = "allow"
+unseparated_literal_suffix = "allow"
+question_mark_used = "allow"
+self_named_module_files = "allow"
+missing_trait_methods = "allow"
+
