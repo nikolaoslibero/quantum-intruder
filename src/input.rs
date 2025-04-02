@@ -68,7 +68,6 @@ fn camera_control(
 
     for mut transform in &mut camera_transforms {
         apply_yaw_rotation(&mut transform, mouse_delta.x, SENSITIVITY);
-
         apply_pitch_rotation(&mut transform, mouse_delta.y, SENSITIVITY);
     }
 }
@@ -79,13 +78,13 @@ fn apply_yaw_rotation(transform: &mut Transform, mouse_x: f32, sensitivity: f32)
 }
 
 fn apply_pitch_rotation(transform: &mut Transform, mouse_y: f32, sensitivity: f32) {
-    const PITCH_MIN: f32 = -1.5;
-    const PITCH_MAX: f32 = 1.5;
+    const PITCH_MIN_RADIANS: f32 = -1.5;
+    const PITCH_MAX_RADIANS: f32 = 1.5;
     let (current_yaw, current_pitch, current_roll) = transform.rotation.to_euler(EulerRot::YXZ);
 
     #[expect(clippy::float_arithmetic, reason = "Camera pitch calculation")]
     let desired_pitch = mouse_y.mul_add(-sensitivity, current_pitch);
-    let clamped_pitch = desired_pitch.clamp(PITCH_MIN, PITCH_MAX);
+    let clamped_pitch = desired_pitch.clamp(PITCH_MIN_RADIANS, PITCH_MAX_RADIANS);
 
     transform.rotation = Quat::from_euler(EulerRot::YXZ, current_yaw, clamped_pitch, current_roll);
 }
