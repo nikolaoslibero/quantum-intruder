@@ -78,8 +78,7 @@ fn apply_yaw_rotation(transform: &mut Transform, mouse_x: f32, sensitivity: f32)
 
 #[expect(clippy::float_arithmetic, reason = "Camera pitch calculation")]
 fn apply_pitch_rotation(transform: &mut Transform, mouse_y: f32, sensitivity: f32) {
-    const EPSILON: f32 = 0.000_000_000_000_000_000_000_000_000_000_000_001;
-    const PITCH_LIMIT: f32 = FRAC_PI_2 - EPSILON;
+    const PITCH_LIMIT: f32 = FRAC_PI_2 - f32::EPSILON;
 
     let (current_yaw, current_pitch, current_roll) = transform.rotation.to_euler(EulerRot::YXZ);
 
