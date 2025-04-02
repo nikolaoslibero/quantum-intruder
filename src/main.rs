@@ -2,6 +2,12 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use core::num::NonZero;
 
+#[derive(Component)]
+struct Player;
+
+#[derive(Resource)]
+struct MouseSensitivity(f32);
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(window_plugin()))
@@ -34,4 +40,22 @@ fn spawn_level(
         AsyncSceneCollider::default(),
         RigidBody::Fixed,
     ));
+}
+
+fn spawn_player(mut commands: Commands) {
+    const PLAYER_BOTTOM: Vec3 = Vec3::new(0.0, 0.5, 0.0);
+    const PLAYER_TOP: Vec3 = Vec3::new(0.0, 1.5, 0.0);
+    const PLAYER_RADIUS: f32 = 0.5;
+
+    commands
+        .spawn((
+            Player,
+            Transform::from_xyz(0.0, 1.0, 0.0),
+            Visibility::default(),
+            KinematicCharacterController::default(),
+            Collider::capsule(PLAYER_BOTTOM, PLAYER_TOP, PLAYER_RADIUS),
+        ))
+        .with_children(|parent| {
+            parent.spawn((Camera3d::default(), Transform::from_xyz(0.0, 0.6, 0.0)));
+        });
 }
