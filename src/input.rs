@@ -56,7 +56,8 @@ fn camera_control(
     mouse_motion: ResMut<AccumulatedMouseMotion>,
     cursor_state: Res<CursorState>,
 ) {
-    const SENSITIVITY: f32 = 0.0005;
+    const MOUSE_SENSITIVITY: f32 = 0.0005;
+
     if *cursor_state == CursorState::Free {
         return;
     }
@@ -67,8 +68,8 @@ fn camera_control(
     }
 
     for mut transform in &mut camera_transforms {
-        apply_yaw_rotation(&mut transform, mouse_delta.x, SENSITIVITY);
-        apply_pitch_rotation(&mut transform, mouse_delta.y, SENSITIVITY);
+        apply_yaw_rotation(&mut transform, mouse_delta.x, MOUSE_SENSITIVITY);
+        apply_pitch_rotation(&mut transform, mouse_delta.y, MOUSE_SENSITIVITY);
     }
 }
 
