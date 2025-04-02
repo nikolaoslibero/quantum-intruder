@@ -7,7 +7,7 @@ pub struct InputPlugin;
 impl Plugin for InputPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<CursorLockState>()
-            .add_systems(Update, (camera_control, cursor_lock_state));
+            .add_systems(Update, (cursor_lock_state, camera_control));
     }
 }
 

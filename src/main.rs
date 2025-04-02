@@ -41,8 +41,17 @@ fn spawn_level(
     ));
 }
 
+fn spawn_player(mut commands: Commands) {
+    commands
+        .spawn(PlayerBundle::default())
+        .with_children(|parent| {
+            parent.spawn((Camera3d::default(), Transform::from_xyz(0.0, 0.6, 0.0)));
+        });
+}
+
 #[derive(Bundle)]
 struct PlayerBundle {
+    player: Player,
     transform: Transform,
     visibility: Visibility,
     kinematic_character_controller: KinematicCharacterController,
@@ -56,6 +65,7 @@ impl Default for PlayerBundle {
         const PLAYER_RADIUS: f32 = 0.5;
 
         Self {
+            player: Player,
             transform: Transform::from_xyz(0.0, 1.0, 0.0),
             visibility: Visibility::default(),
             kinematic_character_controller: KinematicCharacterController::default(),
@@ -64,10 +74,5 @@ impl Default for PlayerBundle {
     }
 }
 
-fn spawn_player(mut commands: Commands) {
-    commands
-        .spawn(PlayerBundle::default())
-        .with_children(|parent| {
-            parent.spawn((Camera3d::default(), Transform::from_xyz(0.0, 0.6, 0.0)));
-        });
-}
+#[derive(Component)]
+struct Player;
