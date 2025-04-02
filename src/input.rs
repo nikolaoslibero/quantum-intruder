@@ -58,33 +58,27 @@ fn camera_control(
     mouse_motion: ResMut<AccumulatedMouseMotion>,
     cursor_state: Res<CursorLockState>,
 ) {
-    const MOUSE_SENSITIVITY: f32 = 0.0005;
-
-    let mouse_delta = mouse_motion.delta;
-    if *cursor_state == CursorLockState::Free || mouse_delta.length_squared() <= 0.0 {
+    if *cursor_state == CursorLockState::Free || mouse_motion.delta.length_squared() <= 0.0 {
         return;
     }
 
     for mut transform in &mut camera_transforms {
-        apply_yaw_rotation(&mut transform, mouse_delta.x, MOUSE_SENSITIVITY);
-        apply_pitch_rotation(&mut transform, mouse_delta.y, MOUSE_SENSITIVITY);
+        apply_mouse_rotation(&mut transform, mouse_motion.delta);
     }
 }
 
 #[expect(clippy::float_arithmetic, reason = "Transform rotation")]
-fn apply_yaw_rotation(transform: &mut Transform, yaw_delta: f32, mouse_sensitivity: f32) {
-    transform.rotate_y(-yaw_delta * mouse_sensitivity);
-}
-
-#[expect(clippy::float_arithmetic, reason = "Camera pitch calculation")]
-fn apply_pitch_rotation(transform: &mut Transform, pitch_delta: f32, mouse_sensitivity: f32) {
+fn apply_mouse_rotation(transform: &mut Transform, delta: Vec2) {
+    const MOUSE_SENSITIVITY: f32 = -0.0005;
     const PITCH_LIMIT: f32 = FRAC_PI_2 - f32::EPSILON;
 
+    let (yaw_delta, pitch_delta) = delta.into();
     let (current_yaw, current_pitch, current_roll) = transform.rotation.to_euler(EulerRot::YXZ);
 
+    let new_yaw = yaw_delta.mul_add(MOUSE_SENSITIVITY, current_yaw);
     let new_pitch = pitch_delta
-        .mul_add(-mouse_sensitivity, current_pitch)
+        .mul_add(MOUSE_SENSITIVITY, current_pitch)
         .clamp(-PITCH_LIMIT, PITCH_LIMIT);
 
-    transform.rotation = Quat::from_euler(EulerRot::YXZ, current_yaw, new_pitch, current_roll);
+    transform.rotation = Quat::from_euler(EulerRot::YXZ, new_yaw, new_pitch, current_roll);
 }
