@@ -5,7 +5,6 @@ pub struct InputPlugin;
 impl Plugin for InputPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<CursorState>()
-            .init_resource::<MouseSensitivity>()
             .add_systems(Update, (camera_control, toggle_cursor_state));
     }
 }
@@ -51,22 +50,13 @@ fn toggle_cursor_state(
     }
 }
 
-#[derive(Resource)]
-struct MouseSensitivity(f32);
-
-impl Default for MouseSensitivity {
-    fn default() -> Self {
-        Self(0.0005)
-    }
-}
-
 #[expect(clippy::needless_pass_by_value, reason = "Bevy convention")]
 fn camera_control(
     mut camera_transforms: Query<&mut Transform, With<Camera3d>>,
     mouse_motion: ResMut<AccumulatedMouseMotion>,
-    sensitivity: Res<MouseSensitivity>,
     cursor_state: Res<CursorState>,
 ) {
+    const SENSITIVITY: f32 = 0.0005;
     if *cursor_state == CursorState::Free {
         return;
     }
@@ -77,9 +67,9 @@ fn camera_control(
     }
 
     for mut transform in &mut camera_transforms {
-        apply_yaw_rotation(&mut transform, mouse_delta.x, sensitivity.0);
+        apply_yaw_rotation(&mut transform, mouse_delta.x, SENSITIVITY);
 
-        apply_pitch_rotation(&mut transform, mouse_delta.y, sensitivity.0);
+        apply_pitch_rotation(&mut transform, mouse_delta.y, SENSITIVITY);
     }
 }
 
