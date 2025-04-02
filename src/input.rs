@@ -6,19 +6,19 @@ pub struct InputPlugin;
 
 impl Plugin for InputPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<CursorState>()
-            .add_systems(Update, (camera_control, toggle_cursor_state));
+        app.init_resource::<CursorLockState>()
+            .add_systems(Update, (camera_control, cursor_lock_state));
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Resource)]
-enum CursorState {
+enum CursorLockState {
     #[default]
     Free,
     Locked,
 }
 
-impl CursorState {
+impl CursorLockState {
     fn toggle(&mut self) {
         *self = match *self {
             Self::Free => Self::Locked,
@@ -26,7 +26,7 @@ impl CursorState {
         };
     }
 
-    fn apply_to_window(self, window: &mut Window) {
+    fn apply_to_bevy_window(self, window: &mut Window) {
         match self {
             Self::Locked => {
                 window.cursor_options.grab_mode = CursorGrabMode::Locked;
@@ -41,14 +41,14 @@ impl CursorState {
 }
 
 #[expect(clippy::needless_pass_by_value, reason = "Bevy convention")]
-fn toggle_cursor_state(
+fn cursor_lock_state(
     mouse_buttons: Res<ButtonInput<MouseButton>>,
-    mut cursor_state: ResMut<CursorState>,
+    mut cursor_lock_state: ResMut<CursorLockState>,
     mut window: Single<&mut Window>,
 ) {
     if mouse_buttons.just_pressed(MouseButton::Right) {
-        cursor_state.toggle();
-        cursor_state.apply_to_window(&mut window);
+        cursor_lock_state.toggle();
+        cursor_lock_state.apply_to_bevy_window(&mut window);
     }
 }
 
@@ -56,12 +56,12 @@ fn toggle_cursor_state(
 fn camera_control(
     mut camera_transforms: Query<&mut Transform, With<Camera3d>>,
     mouse_motion: ResMut<AccumulatedMouseMotion>,
-    cursor_state: Res<CursorState>,
+    cursor_state: Res<CursorLockState>,
 ) {
     const MOUSE_SENSITIVITY: f32 = 0.0005;
 
     let mouse_delta = mouse_motion.delta;
-    if *cursor_state == CursorState::Free || mouse_delta.length_squared() <= 0.0 {
+    if *cursor_state == CursorLockState::Free || mouse_delta.length_squared() <= 0.0 {
         return;
     }
 
