@@ -60,12 +60,8 @@ fn camera_control(
 ) {
     const MOUSE_SENSITIVITY: f32 = 0.0005;
 
-    if *cursor_state == CursorState::Free {
-        return;
-    }
-
     let mouse_delta = mouse_motion.delta;
-    if mouse_delta.length_squared() <= 0.0 {
+    if *cursor_state == CursorState::Free || mouse_delta.length_squared() <= 0.0 {
         return;
     }
 
