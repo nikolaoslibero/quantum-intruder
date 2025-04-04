@@ -43,4 +43,4 @@ impl Default for PlayerBundle {
 }
 
 #[derive(Component)]
-struct Player;
+pub struct Player;
