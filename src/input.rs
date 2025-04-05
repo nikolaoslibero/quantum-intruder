@@ -23,10 +23,6 @@ pub struct Input {
 }
 
 impl Input {
-    pub fn camera_moved(&self) -> bool {
-        self.camera_delta.length_squared() > 0.0
-    }
-
     pub const fn camera_pitch_delta(&self) -> &f32 {
         &self.camera_delta.y
     }

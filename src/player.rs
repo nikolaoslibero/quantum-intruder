@@ -56,50 +56,40 @@ fn camera_pitch_control(
     mut camera_transforms: Query<&mut Transform, With<Camera3d>>,
     input: Res<Input>,
 ) {
-    if *input.cursor_lock_state() == CursorLockState::Free || !input.camera_moved() {
-        return;
-    }
-
-    for mut transform in &mut camera_transforms {
-        apply_mouse_pitch(&mut transform, *input.camera_pitch_delta());
-    }
+    (*input.cursor_lock_state() != CursorLockState::Free).then(|| {
+        camera_transforms.iter_mut().for_each(|mut transform| {
+            transform.rotation =
+                calculate_pitch_rotation(&transform.rotation, *input.camera_pitch_delta());
+        });
+    });
 }
 
+const MOUSE_SENSITIVITY: f32 = 0.0005;
+
 #[expect(clippy::float_arithmetic, reason = "Transform rotation")]
-fn apply_mouse_pitch(camera_transform: &mut Transform, pitch_delta: f32) {
-    const MOUSE_SENSITIVITY: f32 = -0.0005;
+fn calculate_pitch_rotation(current_rotation: &Quat, pitch_delta: f32) -> Quat {
     const PITCH_LIMIT: f32 = FRAC_PI_2 - f32::EPSILON;
 
-    let (current_yaw, current_pitch, current_roll) =
-        camera_transform.rotation.to_euler(EulerRot::YXZ);
+    let (current_yaw, current_pitch, current_roll) = current_rotation.to_euler(EulerRot::YXZ);
 
     let new_pitch = pitch_delta
         .mul_add(MOUSE_SENSITIVITY, current_pitch)
         .clamp(-PITCH_LIMIT, PITCH_LIMIT);
 
-    camera_transform.rotation =
-        Quat::from_euler(EulerRot::YXZ, current_yaw, new_pitch, current_roll);
+    Quat::from_euler(EulerRot::YXZ, current_yaw, new_pitch, current_roll)
 }
 
 #[expect(clippy::needless_pass_by_value, reason = "Bevy convention")]
+#[expect(clippy::float_arithmetic, reason = "Transform rotation")]
 fn player_yaw_control(
     mut player_transforms: Query<&mut Transform, With<Player>>,
     input: Res<Input>,
 ) {
-    if *input.cursor_lock_state() == CursorLockState::Free || !input.camera_moved() {
-        return;
-    }
-
-    for mut transform in &mut player_transforms {
-        apply_mouse_yaw(&mut transform, *input.camera_yaw_delta());
-    }
-}
-
-#[expect(clippy::float_arithmetic, reason = "Transform rotation")]
-fn apply_mouse_yaw(camera_transform: &mut Transform, yaw_delta: f32) {
-    const MOUSE_SENSITIVITY: f32 = -0.0005;
-
-    camera_transform.rotate_y(yaw_delta * MOUSE_SENSITIVITY);
+    (*input.cursor_lock_state() != CursorLockState::Free).then(|| {
+        player_transforms.iter_mut().for_each(|mut transform| {
+            transform.rotate_y(*input.camera_yaw_delta() * MOUSE_SENSITIVITY);
+        });
+    });
 }
 
 #[expect(clippy::needless_pass_by_value, reason = "Bevy convention")]
@@ -108,16 +98,14 @@ fn player_movement(
     input: Res<Input>,
     time: Res<Time>,
 ) {
-    if *input.cursor_lock_state() == CursorLockState::Free {
-        return;
-    }
-
-    motion_query
-        .iter_mut()
-        .for_each(|(mut controller, transform)| {
-            controller.translation =
-                calculate_player_translation(transform, &input, time.delta_secs());
-        });
+    (*input.cursor_lock_state() != CursorLockState::Free).then(|| {
+        motion_query
+            .iter_mut()
+            .for_each(|(mut controller, transform)| {
+                controller.translation =
+                    calculate_player_translation(transform, &input, time.delta_secs());
+            });
+    });
 }
 
 #[expect(clippy::arithmetic_side_effects, reason = "Transform calculation")]
