@@ -3,8 +3,15 @@ pub struct InputPlugin;
 
 impl Plugin for InputPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<Input>()
-            .add_systems(Update, (cursor_lock_state, camera_delta, translation_angle));
+        app.init_resource::<Input>().add_systems(
+            Update,
+            (
+                update_cursor_lock_state,
+                apply_cursor_lock_state,
+                camera_delta,
+                translation_angle,
+            ),
+        );
     }
 }
 
@@ -67,15 +74,18 @@ impl CursorLockState {
 }
 
 #[expect(clippy::needless_pass_by_value, reason = "Bevy convention")]
-fn cursor_lock_state(
+fn update_cursor_lock_state(
     mouse_buttons: Res<ButtonInput<MouseButton>>,
     mut input: ResMut<Input>,
-    mut window: Single<&mut Window>,
 ) {
-    if mouse_buttons.just_pressed(MouseButton::Right) {
+    mouse_buttons.just_pressed(MouseButton::Right).then(|| {
         input.cursor_lock_state.toggle();
-        input.cursor_lock_state.apply_to_bevy_window(&mut window);
-    }
+    });
+}
+
+#[expect(clippy::needless_pass_by_value, reason = "Bevy convention")]
+fn apply_cursor_lock_state(input: Res<Input>, mut window: Single<&mut Window>) {
+    input.cursor_lock_state.apply_to_bevy_window(&mut window);
 }
 
 #[expect(clippy::needless_pass_by_value, reason = "Bevy convention")]
