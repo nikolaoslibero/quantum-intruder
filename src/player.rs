@@ -10,7 +10,8 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, spawn_player)
             .add_systems(Update, camera_pitch_control)
-            .add_systems(Update, player_yaw_control);
+            .add_systems(Update, player_yaw_control)
+            .add_systems(Update, player_movement);
     }
 }
 
@@ -99,4 +100,33 @@ fn apply_mouse_yaw(camera_transform: &mut Transform, yaw_delta: f32) {
     const MOUSE_SENSITIVITY: f32 = -0.0005;
 
     camera_transform.rotate_y(yaw_delta * MOUSE_SENSITIVITY);
+}
+
+#[expect(clippy::needless_pass_by_value, reason = "Bevy convention")]
+fn player_movement(
+    mut motion_query: Query<(&mut KinematicCharacterController, &Transform)>,
+    input: Res<Input>,
+    time: Res<Time>,
+) {
+    if *input.cursor_lock_state() == CursorLockState::Free {
+        return;
+    }
+
+    motion_query
+        .iter_mut()
+        .for_each(|(mut controller, transform)| {
+            controller.translation =
+                calculate_player_translation(transform, &input, time.delta_secs());
+        });
+}
+
+#[expect(clippy::arithmetic_side_effects, reason = "Transform calculation")]
+fn calculate_player_translation(
+    transform: &Transform,
+    input: &Input,
+    delta_secs: f32,
+) -> Option<Vec3> {
+    input.translation_angle().map(|angle| {
+        transform.rotation * Quat::from_rotation_y(*angle) * Vec3::NEG_Z * 10.0 * delta_secs
+    })
 }
