@@ -4,9 +4,10 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use core::num::NonZero;
 use player::PlayerPlugin;
-
+use user_interface::UserInterfacePlugin;
 mod input;
 mod player;
+mod user_interface;
 
 fn main() {
     App::new()
@@ -14,6 +15,7 @@ fn main() {
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
         .add_plugins(InputPlugin)
         .add_plugins(PlayerPlugin)
+        .add_plugins(UserInterfacePlugin)
         .add_systems(Startup, spawn_level)
         .run();
 }
