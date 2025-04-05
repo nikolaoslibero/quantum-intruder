@@ -64,7 +64,7 @@ fn camera_pitch_control(
     });
 }
 
-const MOUSE_SENSITIVITY: f32 = 0.0005;
+const MOUSE_SENSITIVITY: f32 = -0.0005;
 
 #[expect(clippy::float_arithmetic, reason = "Transform rotation")]
 fn calculate_pitch_rotation(current_rotation: &Quat, pitch_delta: f32) -> Quat {
