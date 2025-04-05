@@ -115,6 +115,7 @@ fn calculate_player_translation(
     delta_secs: f32,
 ) -> Option<Vec3> {
     input.translation_angle().map(|angle| {
-        transform.rotation * Quat::from_rotation_y(*angle) * Vec3::NEG_Z * 10.0 * delta_secs
+        const SPEED: f32 = 10.0;
+        transform.rotation * Quat::from_rotation_y(*angle) * Vec3::NEG_Z * SPEED * delta_secs
     })
 }
