@@ -67,12 +67,21 @@ impl Default for DebugTextBundle {
 struct DebugText;
 
 #[expect(clippy::needless_pass_by_value, reason = "Bevy convention")]
-fn update_ui(mut text_query: Query<&mut Text, With<DebugText>>, input: Res<Input>) {
+#[expect(clippy::too_many_arguments, reason = "Excuse my debug mess")]
+fn update_ui(
+    mut text_query: Query<&mut Text, With<DebugText>>,
+    input: Res<Input>,
+    keyboard: Res<ButtonInput<KeyCode>>,
+    player_camera: Query<&Transform, With<Camera3d>>,
+) {
     text_query.iter_mut().for_each(|mut text| {
+        let (yaw, pitch, roll) = player_camera.single().rotation.to_euler(EulerRot::YXZ);
         text.0 = format!(
-            "cursor: {:?}\ntranslation angle: {:?}",
+            "cursor: {:?}\ntranslation angle: {:?}\nkeys: {:?}\npitch: {:.2?}",
             input.cursor_lock_state(),
             input.translation_angle(),
+            keyboard.get_pressed().collect::<Vec<_>>(),
+            pitch,
         );
     });
 }
