@@ -23,6 +23,7 @@ pub struct Input {
 }
 
 impl Input {
+    const MOUSE_SENSITIVITY: f32 = -0.0005;
     pub const fn camera_pitch_delta(&self) -> &f32 {
         &self.camera_delta.y
     }
@@ -85,8 +86,12 @@ fn apply_cursor_lock_state(input: Res<Input>, mut window: Single<&mut Window>) {
 }
 
 #[expect(clippy::needless_pass_by_value, reason = "Bevy convention")]
+#[expect(
+    clippy::arithmetic_side_effects,
+    reason = "No DPI is high enough to overflow"
+)]
 fn camera_delta(mouse_motion: ResMut<AccumulatedMouseMotion>, mut input: ResMut<Input>) {
-    input.camera_delta = mouse_motion.delta;
+    input.camera_delta = mouse_motion.delta * Input::MOUSE_SENSITIVITY;
 }
 
 #[expect(clippy::needless_pass_by_value, reason = "Bevy convention")]
@@ -96,7 +101,7 @@ fn translation_angle(keyboard_buttons: Res<ButtonInput<KeyCode>>, mut input: Res
     input.translation_angle = (direction != Vec2::ZERO).then_some(direction.x.atan2(direction.y));
 }
 
-#[expect(clippy::arithmetic_side_effects, reason = "Direction calculation")]
+#[expect(clippy::arithmetic_side_effects, reason = "-1, and 1 won't overflow")]
 fn get_keys_vector(keyboard_buttons: &Res<'_, ButtonInput<KeyCode>>) -> Vec2 {
     const DIRECTION_VALUES: [(KeyCode, Vec2); 4] = [
         (KeyCode::KeyW, Vec2::new(0.0, 1.0)),
