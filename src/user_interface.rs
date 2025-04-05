@@ -75,7 +75,7 @@ fn update_ui(
     player_camera: Query<&Transform, With<Camera3d>>,
 ) {
     text_query.iter_mut().for_each(|mut text| {
-        let (yaw, pitch, roll) = player_camera.single().rotation.to_euler(EulerRot::YXZ);
+        let (_yaw, pitch, _roll) = player_camera.single().rotation.to_euler(EulerRot::YXZ);
         text.0 = format!(
             "cursor: {:?}\ntranslation angle: {:?}\nkeys: {:?}\npitch: {:.2?}",
             input.cursor_lock_state(),
