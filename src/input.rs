@@ -15,7 +15,7 @@ impl Plugin for InputPlugin {
     }
 }
 
-#[derive(Resource, Default)]
+#[derive(Resource, Debug, Default)]
 pub struct Input {
     camera_delta: Vec2,
     cursor_lock_state: CursorLockState,
@@ -41,7 +41,7 @@ impl Input {
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
 pub enum CursorLockState {
     #[default]
     Free,
