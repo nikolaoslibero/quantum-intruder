@@ -1,10 +1,11 @@
-use crate::input::InputPlugin;
-
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use core::num::NonZero;
+
+use input::InputPlugin;
 use player::PlayerPlugin;
 use user_interface::UserInterfacePlugin;
+
 mod input;
 mod player;
 mod user_interface;
