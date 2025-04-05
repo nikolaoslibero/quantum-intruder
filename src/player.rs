@@ -51,6 +51,10 @@ impl Default for PlayerBundle {
 #[derive(Component)]
 pub struct Player;
 
+impl Player {
+    const SPEED: f32 = 10.0;
+}
+
 #[expect(clippy::needless_pass_by_value, reason = "Bevy convention")]
 fn camera_pitch_control(
     mut camera_transforms: Query<&mut Transform, With<Camera3d>>,
@@ -110,7 +114,10 @@ fn calculate_player_translation(
     delta_secs: f32,
 ) -> Option<Vec3> {
     input.translation_angle().map(|angle| {
-        const SPEED: f32 = 10.0;
-        transform.rotation * Quat::from_rotation_y(*angle) * Vec3::NEG_Z * SPEED * delta_secs
+        transform.rotation
+            * Quat::from_rotation_y(*angle)
+            * Vec3::NEG_Z
+            * Player::SPEED
+            * delta_secs
     })
 }
