@@ -23,7 +23,7 @@ impl UserInterfacePlugin {
         app.add_plugins(FpsOverlayPlugin {
             config: FpsOverlayConfig {
                 text_config: TextFont {
-                    font_size: 16.0,
+                    font_size: FONT_SIZE,
                     ..default()
                 },
                 ..default()
@@ -31,6 +31,8 @@ impl UserInterfacePlugin {
         });
     }
 }
+
+const FONT_SIZE: f32 = 16.0;
 
 fn spawn_ui(mut commands: Commands) {
     commands.spawn(DebugTextBundle::default());
@@ -50,7 +52,7 @@ impl Default for DebugTextBundle {
             debug_text: DebugText,
             text: Text::new(""),
             text_font: TextFont {
-                font_size: 16.0,
+                font_size: FONT_SIZE,
                 ..default()
             },
             node: Node {

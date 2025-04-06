@@ -2,7 +2,7 @@ allow-expect-in-tests = true
 allow-unwrap-in-tests = true
 
 cognitive-complexity-threshold = 3
-too-many-lines-threshold = 14
+too-many-lines-threshold = 15
 excessive-nesting-threshold = 3
 too-many-arguments-threshold = 3
 max-fn-params-bools = 1

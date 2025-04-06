@@ -103,11 +103,15 @@ fn translation_angle(keyboard_buttons: Res<ButtonInput<KeyCode>>, mut input: Res
 
 #[expect(clippy::arithmetic_side_effects, reason = "-1, and 1 won't overflow")]
 fn get_keys_vector(keyboard_buttons: &Res<'_, ButtonInput<KeyCode>>) -> Vec2 {
+    const FORWARD: Vec2 = Vec2::new(0.0, 1.0);
+    const BACKWARD: Vec2 = Vec2::new(0.0, -1.0);
+    const LEFT: Vec2 = Vec2::new(1.0, 0.0);
+    const RIGHT: Vec2 = Vec2::new(-1.0, 0.0);
     const DIRECTION_VALUES: [(KeyCode, Vec2); 4] = [
-        (KeyCode::KeyW, Vec2::new(0.0, 1.0)),
-        (KeyCode::KeyS, Vec2::new(0.0, -1.0)),
-        (KeyCode::KeyA, Vec2::new(1.0, 0.0)),
-        (KeyCode::KeyD, Vec2::new(-1.0, 0.0)),
+        (KeyCode::KeyW, FORWARD),
+        (KeyCode::KeyS, BACKWARD),
+        (KeyCode::KeyA, LEFT),
+        (KeyCode::KeyD, RIGHT),
     ];
 
     DIRECTION_VALUES
