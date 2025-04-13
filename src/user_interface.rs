@@ -9,16 +9,13 @@ pub struct UserInterfacePlugin;
 
 impl Plugin for UserInterfacePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, spawn_ui)
-            .add_systems(Update, update_ui);
-
         #[cfg(feature = "default")]
         Self::default_build(app);
     }
 }
 
+#[cfg(feature = "default")]
 impl UserInterfacePlugin {
-    #[cfg(feature = "default")]
     fn default_build(app: &mut App) {
         app.add_plugins(FpsOverlayPlugin {
             config: FpsOverlayConfig {
@@ -28,16 +25,20 @@ impl UserInterfacePlugin {
                 },
                 ..default()
             },
-        });
+        })
+        .add_systems(Startup, spawn_debug_ui)
+        .add_systems(Update, update_debug_ui);
     }
 }
 
 const FONT_SIZE: f32 = 16.0;
 
-fn spawn_ui(mut commands: Commands) {
+#[cfg(feature = "default")]
+fn spawn_debug_ui(mut commands: Commands) {
     commands.spawn(DebugTextBundle::default());
 }
 
+#[cfg(feature = "default")]
 #[derive(Bundle)]
 struct DebugTextBundle {
     debug_text: DebugText,
@@ -65,12 +66,14 @@ impl Default for DebugTextBundle {
     }
 }
 
+#[cfg(feature = "default")]
 #[derive(Component, Default)]
 struct DebugText;
 
+#[cfg(feature = "default")]
 #[expect(clippy::needless_pass_by_value, reason = "Bevy convention")]
 #[expect(clippy::too_many_arguments, reason = "Excuse my debug mess")]
-fn update_ui(
+fn update_debug_ui(
     mut text_query: Query<&mut Text, With<DebugText>>,
     input: Res<Input>,
     keyboard: Res<ButtonInput<KeyCode>>,
