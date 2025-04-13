@@ -8,6 +8,7 @@ use user_interface::UserInterfacePlugin;
 
 mod input;
 mod player;
+mod quantum_device;
 mod user_interface;
 
 fn main() {
