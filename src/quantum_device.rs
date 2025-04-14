@@ -18,14 +18,14 @@ fn spawn_quantum_device(mut commands: Commands) {
 }
 
 #[derive(Component)]
-pub struct QuantumDevice {
+struct QuantumDevice {
     timer: Timer,
     histories: Vec<History>,
     current_history: Option<History>,
 }
 
 impl QuantumDevice {
-    pub fn new(duration: Duration) -> Self {
+    fn new(duration: Duration) -> Self {
         Self {
             timer: Timer::new(duration, TimerMode::Once),
             histories: vec![],
@@ -34,12 +34,12 @@ impl QuantumDevice {
     }
 }
 
-pub struct History {
+struct History {
     actions: HashMap<Action, Duration>,
 }
 
 impl History {
-    pub fn new() -> Self {
+    fn new() -> Self {
         Self { actions: HashMap::new() }
     }
 }
